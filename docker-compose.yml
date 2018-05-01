@@ -1,0 +1,53 @@
+version: "3.1"
+services:
+
+    mailhog:
+      image: mailhog/mailhog:latest
+      container_name: wordpress-base-mailhog
+      ports:
+        - "8025:8025"
+
+    mysql:
+      image: mysql:5.7
+      container_name: wordpress-base-mysql
+      volumes:
+        - wordpress_db_data:/var/lib/mysql
+      environment:
+        - MYSQL_ROOT_PASSWORD=123456
+        - MYSQL_DATABASE=forge
+        - MYSQL_USER=root
+        - MYSQL_PASSWORD=123456
+      ports:
+        - "3306:3306"
+
+    webserver:
+      image: nginx:alpine
+      container_name: wordpress-base-webserver
+      working_dir: /application
+      volumes:
+          - .:/application
+          - ./phpdocker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      ports:
+       - "80:80"
+      depends_on:
+        - php-fpm
+
+    php-fpm:
+      build: 
+        context: .
+        dockerfile: ./phpdocker/php-fpm/Dockerfile
+      container_name: wordpress-base-php-fpm
+      working_dir: /application
+      ports:
+        - "9090:9090"
+      volumes:
+        - .:/application
+        - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+        - composer_vendor:/application/vendor
+      depends_on:
+        - mysql
+        - mailhog
+
+volumes:
+  wordpress_db_data:
+  composer_vendor:
