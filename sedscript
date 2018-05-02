@@ -1,0 +1,5 @@
+s/database_name_here/forge/
+s/username_here/root/
+s/password_here/123456/
+s/localhost/mysql/
+s/define('WP_DEBUG', false);/define('WP_DEBUG', true);/

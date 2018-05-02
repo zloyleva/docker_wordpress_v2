@@ -18,6 +18,17 @@ stop: #stop docker container
 remove: #remove docker image
 	@sudo docker-compose down; sudo docker rmi -f $(docker_image)
 
+install_wordpress: load_wordpress config_wordpress chmod
+	echo "install WP was finished."
+load_wordpress: #
+	@sudo docker exec -it $(docker_name) bash -c 'wget -c http://wordpress.org/latest.tar.gz && tar -xzvf latest.tar.gz && rsync -av wordpress/* ./public/ && rm latest.tar.gz && rm -rf wordpress/'
+
+config_wordpress: rewrite_wordpress_config
+	echo "WP was config"
+
+rewrite_wordpress_config: #
+	@sudo docker exec -it $(docker_name) bash -c 'sed -f sedscript <./public/wp-config-sample.php > ./public/wp-config.php'
+
 composer_update: #update vendors
 	@sudo docker exec -it $(docker_name) bash -c 'php composer.phar update && chmod -R 777 . && php composer.phar dump-autoload'
 
