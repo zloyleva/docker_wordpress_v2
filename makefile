@@ -2,6 +2,7 @@ docker_name = wordpress-base-php-fpm
 docker_webserver = wordpress-base-webserver
 docker_mysql = wordpress-base-mysql
 docker_image = wordpressbase_php-fpm
+docker_nodejs = wordpress-base-nodejs
 
 help: #prints list of commands
 	@cat ./makefile | grep : | grep -v "grep"
@@ -47,6 +48,9 @@ connect: #connect to container bash
 connect_mysql: #connect to container bash
 	@sudo docker exec -it $(docker_mysql) bash
 
+connect_nodejs: #connect to container bash
+	@sudo docker exec -it $(docker_nodejs) bash
+
 volumes: #docker volumes list
 	@sudo docker volume ls
 
@@ -57,7 +61,7 @@ populate_vendors: #generate dock
 	@sudo docker exec -it $(docker_name) bash -c 'cp -R ./vendor ./ven && chmod -R 777 .' && sudo sh -c 'rm -R ./vendor; mv ./ven ./vendor'
 
 mix_watch: #run mix in watch
-	@sudo npm run watch && chmod -R 777 .
+	@sudo docker exec -it $(docker_nodejs) bash -c 'npm run watch && chmod -R 777 .'
 
 clean_log:
 	@sudo cat /dev/null > storage/logs/laravel.log; sudo cat /dev/null > storage/logs/queue-worker.log

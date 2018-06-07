@@ -1,6 +1,16 @@
 version: "3.1"
 services:
 
+    nodejs:
+      container_name: wordpress-base-nodejs
+      build:
+        context: .
+        dockerfile: ./docker/nodejs/Dockerfile
+      volumes:
+       - .:/app
+      ports:
+       - '4200:4200'
+
     mailhog:
       image: mailhog/mailhog:latest
       container_name: wordpress-base-mailhog
@@ -26,7 +36,7 @@ services:
       working_dir: /application
       volumes:
           - .:/application
-          - ./phpdocker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+          - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       ports:
        - "80:80"
       depends_on:
@@ -35,14 +45,14 @@ services:
     php-fpm:
       build: 
         context: .
-        dockerfile: ./phpdocker/php-fpm/Dockerfile
+        dockerfile: ./docker/php-fpm/Dockerfile
       container_name: wordpress-base-php-fpm
       working_dir: /application
       ports:
         - "9090:9090"
       volumes:
         - .:/application
-        - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+        - ./docker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
         - composer_vendor:/application/vendor
       depends_on:
         - mysql

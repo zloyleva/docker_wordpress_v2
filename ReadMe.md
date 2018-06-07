@@ -34,3 +34,14 @@ $ make install
 ```
 $ make install_wordpress
 ```
+
+## Laravel Mix
+
+First - enter to nodejs image
+```
+$make connect_nodejs
+```
+Next run install npm dependencies
+```
+$ npm i
+```
