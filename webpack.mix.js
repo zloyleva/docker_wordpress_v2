@@ -16,3 +16,4 @@ const css_public_path = 'public/wp-content/themes/laterna/styles/style.css';
 
 mix.js('assets/js/app.js', js_public_path)
     .sass('assets/sass/app.scss', css_public_path);
+mix.options({ processCssUrls: false });//ignore img paths
