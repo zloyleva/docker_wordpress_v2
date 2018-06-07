@@ -21,6 +21,7 @@ remove: #remove docker image
 
 install_wordpress: load_wordpress config_wordpress chmod
 	echo "install WP was finished."
+
 load_wordpress: #
 	@sudo docker exec -it $(docker_name) bash -c 'wget -c http://wordpress.org/latest.tar.gz && tar -xzvf latest.tar.gz && rsync -av wordpress/* ./public/ && rm latest.tar.gz && rm -rf wordpress/'
 
@@ -32,12 +33,6 @@ rewrite_wordpress_config: #
 
 composer_update: #update vendors
 	@sudo docker exec -it $(docker_name) bash -c 'php composer.phar update && chmod -R 777 . && php composer.phar dump-autoload'
-
-composer_dump: #update vendors
-	@sudo docker exec -it $(docker_name) bash -c 'php composer.phar dump-autoload'
-
-set_env: #set default environments
-	@cp ./.env.example ./.env
 
 chmod: #allow RW to all
 	@sudo docker exec -it $(docker_name) bash -c 'chmod -R 777 .'
@@ -57,11 +52,5 @@ volumes: #docker volumes list
 rm_volume: #remove docker volume name=[volumeName]
 	@sudo docker-compose down && sudo docker volume rm $(name)
 
-populate_vendors: #generate dock
-	@sudo docker exec -it $(docker_name) bash -c 'cp -R ./vendor ./ven && chmod -R 777 .' && sudo sh -c 'rm -R ./vendor; mv ./ven ./vendor'
-
 mix_watch: #run mix in watch
 	@sudo docker exec -it $(docker_nodejs) bash -c 'npm run watch && chmod -R 777 .'
-
-clean_log:
-	@sudo cat /dev/null > storage/logs/laravel.log; sudo cat /dev/null > storage/logs/queue-worker.log
